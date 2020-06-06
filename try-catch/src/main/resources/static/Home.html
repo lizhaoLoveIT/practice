@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>华人加速器后台管理</title>
+</head>
+<body>
+<button class="aa">点击</button>
+<p class="p"></p>
+</body>
+<script src="layui/layui.js"></script>
+<script src="js/commen/jquery-3.4.1.min.js"></script>
+<script src="js/commen/common.js"></script>
+<script>
+    $('.aa').click(function () {
+        Ajax('/admin/index', {},"POST","json", function (res) {
+            // console.log(res);
+            $(".p").text(JSON.stringify(res))
+        })
+    })
+</script>
+</html>
