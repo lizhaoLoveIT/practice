@@ -1,5 +1,6 @@
 package cn.lizhaoloveit.base;
 
+import cn.lizhaoloveit.base.exception.AMError;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

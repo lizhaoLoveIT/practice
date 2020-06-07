@@ -1,8 +1,10 @@
 package cn.lizhaoloveit.trycatch;
 
 import cn.lizhaoloveit.base.JsonResult;
+import cn.lizhaoloveit.base.exception.AMError;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * DESCRIPTION:
@@ -14,14 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class HelloController {
     
     @RequestMapping("/login")
-    public JsonResult login() {
+    @ResponseBody
+    public JsonResult login(String username, String password) {
         JsonResult jsonResult = new JsonResult();
-        try { 
-            
-            return jsonResult.success();
-        } catch (Exception e) {
-            return jsonResult.failed(e.getMessage());
-        }
+        AMError.ARGS_NOT_NULL.assertNotNull(username, password);
+        return jsonResult;
     }
     
 }
