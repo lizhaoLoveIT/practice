@@ -32,8 +32,6 @@ public class GlobleExceptionHandler {
     @Value("${spring.profiles.active}")
     private String profile;
 
-    // TODO:判断是否为生产环境
-
     /**
      * 自定义异常
      *
