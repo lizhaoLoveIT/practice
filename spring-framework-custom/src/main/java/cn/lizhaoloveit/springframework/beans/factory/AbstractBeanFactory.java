@@ -1,5 +1,6 @@
 package cn.lizhaoloveit.springframework.beans.factory;
 
+import cn.lizhaoloveit.springframework.beans.factory.BeanFactory;
 import cn.lizhaoloveit.springframework.beans.config.BeanDefinition;
 
 /**
@@ -10,11 +11,11 @@ import cn.lizhaoloveit.springframework.beans.config.BeanDefinition;
  */
 public abstract class AbstractBeanFactory implements BeanFactory {
     @Override
-    public <T> T getBeans(Class<T> clazz) {
+    public <T> T getBean(Class<T> clazz) {
         return null;
     }
     @Override
-    public Object getBeans(String beanName) {
+    public Object getBean(String beanName) {
         return null;
     }
     public abstract void registerBeanDefinition(String beanName, BeanDefinition beanDefinition);

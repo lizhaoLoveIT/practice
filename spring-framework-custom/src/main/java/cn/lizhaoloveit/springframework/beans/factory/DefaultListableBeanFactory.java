@@ -1,5 +1,7 @@
 package cn.lizhaoloveit.springframework.beans.factory;
 
+import cn.lizhaoloveit.springframework.beans.aware.Aware;
+import cn.lizhaoloveit.springframework.beans.aware.BeanFactoryAware;
 import cn.lizhaoloveit.springframework.beans.config.BeanDefinition;
 import cn.lizhaoloveit.springframework.beans.config.ClassPathResource;
 import cn.lizhaoloveit.springframework.beans.config.PropertyValue;
@@ -74,7 +76,7 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
     }
 
     @Override
-    public Object getBeans(String beanName) {
+    public Object getBean(String beanName) {
         Object instance = singletonObjects.get(beanName);
         if (instance != null) return instance;
         // 2.如果singletonObjects中已经没有包含我们要找的对象，那么根据传递过来的beanName参数去BeanDefinition集合中查找对应的BeanDefinition信息
@@ -88,7 +90,7 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
     }
 
     @Override
-    public <T> T getBeans(Class<T> clazz) {
+    public <T> T getBean(Class<T> clazz) {
         // 优化方案
         // 给对象起个名，在xml配置文件中，建立名称和对象的映射关系
         // 1.如果singletonObjects中已经包含了我们要找的对象，就不需要再创建了。
@@ -113,6 +115,14 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
     }
 
     private <T> void initBean(T instance, BeanDefinition beanDefinition) {
+        // 判断aware是不是instance实例的接口
+        // 操作Aware接口
+        if (instance instanceof Aware) {
+            if (instance instanceof BeanFactoryAware) {
+                ((BeanFactoryAware) instance).setBeanFactory(this);
+            }
+        }
+
         String initMethod = beanDefinition.getInitMethod();
         if (initMethod == null || initMethod.equals("")) return;
         ReflectUtils.invokeMethod(instance, initMethod, null);
@@ -138,13 +148,67 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
             } else if (value instanceof RuntimeBeanReference) {
                 RuntimeBeanReference reference = (RuntimeBeanReference) value;
                 String ref = reference.getRef();
-                trueValue = getBeans(ref);
+                trueValue = getBean(ref);
             }
             // 值类型转换完后 使用反射赋值
             ReflectUtils.setProperty(instance, name, trueValue);
         }
     }
+
+    /**
+     * 根据指定bean的类型，获取对应的类型和子类型对应的bean实例
+     *
+     * @param clazz
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> List<T> getBeansByType(Class<T> clazz) {
+        List<T> list = new ArrayList<>();
+        try {
+            for (BeanDefinition beanDefinition : beanDefinitionClzs.values()) {
+                // 所有beandefinition中的bean的类型
+                Class<?> clazz1 = Class.forName(beanDefinition.getBeanClassName());
+                // clazz是否是clazz1的父类型
+                if (clazz.isAssignableFrom(clazz1)) {
+                    String beanName = beanDefinition.getBeanName();
+                    list.add((T) getBean(beanName));
+                }
+            }
+
+            return list;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public List<String> getBeanNamesByType(Class<?> type) {
+        try {
+            List<String> result = new ArrayList<>();
+            for (String beanName : beanDefinitionIds.keySet()) {
+                BeanDefinition beanDefinition = beanDefinitionIds.get(beanName);
+
+                Class<?> clazz = Class.forName(beanDefinition.getBeanClassName());
+                // 判断type是否是clazz的父类
+                if (type.isAssignableFrom(clazz)) {
+                    result.add(beanName);
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private Object createBeanInstance(String beanClassName, Object... args) {
         return ReflectUtils.createObject(beanClassName, args);
+    }
+
+    @Override
+    public Map<String, BeanDefinition> getBeanDefiitions() {
+        return beanDefinitionIds;
     }
 }

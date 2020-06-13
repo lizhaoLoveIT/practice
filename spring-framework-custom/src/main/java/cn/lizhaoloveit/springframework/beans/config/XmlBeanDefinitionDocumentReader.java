@@ -1,6 +1,9 @@
 package cn.lizhaoloveit.springframework.beans.config;
 
+import cn.lizhaoloveit.springframework.beans.config.PropertyValue;
 import cn.lizhaoloveit.springframework.beans.factory.DefaultListableBeanFactory;
+import cn.lizhaoloveit.springframework.beans.factory.DefaultListableBeanFactory;
+import cn.lizhaoloveit.springframework.beans.utils.ClassUtils;
 import cn.lizhaoloveit.springframework.beans.utils.ReflectUtils;
 import org.dom4j.Element;
 
@@ -96,7 +99,29 @@ public class XmlBeanDefinitionDocumentReader {
         } else return;
     }
     private void parseCustomElement(Element element) {
+        if (element.getName().equals("component-scan")) {
+            String packageName = element.attributeValue("package");
+            List<String> beanClassNames = getBeanClassName(packageName);
+            BeanDefinition beanDefinition = null;
+            for (String beanClassName : beanClassNames) {
+                String beanName = beanClassName.substring(beanClassName.lastIndexOf(".") + 1);
+                beanDefinition = new BeanDefinition(beanClassName, beanName);
+                registerBeanDefinition(beanName, beanDefinition);
+            }
+        }
     }
+
+    /**
+     * 获取项目路径下的所有类名
+     * @param packageName
+     * @return
+     */
+    private static List<String> getBeanClassName(String packageName) {
+        // 获取项目路径下指定包名下面的所有类名
+        List<String> clazzNames = ClassUtils.getClazzName(packageName, false);
+        return clazzNames;
+    }
+
     private void registerBeanDefinitionClass(String simpleName, BeanDefinition beanDefinition) {
         this.beanFactory.registerBeanDefinitionClz(simpleName, beanDefinition);
     }

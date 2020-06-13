@@ -1,8 +1,8 @@
 package cn.lizhaoloveit.springframework.beans.config;
 
+import cn.lizhaoloveit.springframework.beans.config.XmlBeanDefinitionDocumentReader;
 import cn.lizhaoloveit.springframework.beans.factory.DefaultListableBeanFactory;
 import cn.lizhaoloveit.springframework.beans.utils.DocumentReader;
-import cn.lizhaoloveit.springframework.beans.config.XmlBeanDefinitionDocumentReader;
 import org.dom4j.Document;
 
 import java.io.InputStream;

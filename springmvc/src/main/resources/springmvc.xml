@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+    <!-- 配置handler -->
+    <bean class="cn.lizhaoloveit.springmvc.handlermapping.impl.RequestMappingHandlerMapping"
+            init-method="initMethod"></bean>
+    <!-- 配置处理器适配器 -->
+    <bean class="cn.lizhaoloveit.springmvc.handleradapter.impl.RequestMappingHandlerAdapter"></bean>
+
+    <component-scan package="cn.lizhaoloveit.springmvc.handlers"/>
+</beans>
