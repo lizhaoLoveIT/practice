@@ -1,5 +1,7 @@
 package cn.lizhaoloveit.base.exception;
 
+import org.springframework.util.StringUtils;
+
 /**
  * DESCRIPTION:
  * Author: Ammar
@@ -8,7 +10,7 @@ package cn.lizhaoloveit.base.exception;
  */
 public enum AMError implements AssertNotNull {
     // system
-    ARGS_NOT_NULL(7001, "参数类型为空"),
+    ARGS_NOT_NULL(7001, "参数为空"),
     SERVLET_EXCEPTION(9999, "系统开小差了"),
 
     // captchaCode
@@ -64,6 +66,14 @@ public enum AMError implements AssertNotNull {
                 return new ParameterNullException(this, t);
             default:
                 return new BaseException(this, t);
+        }
+    }
+
+    public void assertNotNull(Object object) {
+        if (object instanceof String) {
+            if (StringUtils.isEmpty(object)) throw new BaseException(this);
+        } else {
+            if (object == null) throw new BaseException(this);
         }
     }
 }
